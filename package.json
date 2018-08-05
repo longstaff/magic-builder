@@ -1,0 +1,21 @@
+{
+  "name": "magic",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "browserfs": "^1.4.3",
+    "isomorphic-git": "^0.24.4",
+    "mana-font": "^1.4.1",
+    "mtgsdk": "^0.3.0",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1",
+    "react-scripts": "1.1.4",
+    "styled-components": "^3.3.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  }
+}
