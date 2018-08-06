@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import {saveData, initRepo, retrieveData} from '../../data'
 import CardSection from '../CardSection';
+import FindCard from '../FindCard';
 import ImportList from '../ImportList';
 
 class App extends Component {
@@ -58,6 +59,8 @@ class App extends Component {
             /></li>
           })}
         </ul>
+
+        <FindCard />
       </div>
     );
   }

@@ -33,7 +33,7 @@ class CardSection extends React.Component {
 			<h2>{title}</h2>
 			<StyledList count={cards.length} expanded={expanded > -1 && expanded < cards.length-1}>
 				{cards.map((card, index) => 
-					<StyledCard index={index} expandedBefore={expanded > -1 && expanded < index} key={index} onClick={() => this.props.setExpanded(index)}>
+					<StyledCard index={index} expandedBefore={expanded > -1 && expanded < index} key={card.name} onClick={() => this.props.setExpanded(index)}>
 						<Card data={card} expanded={index===expanded || index === cards.length-1}/>
 					</StyledCard>)}
 			</StyledList>
