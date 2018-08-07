@@ -1,6 +1,7 @@
 import React from 'react';
 import { getCardList } from '../../utils/cache';
 import CardSection from '../CardSection';
+import CardMenu from '../CardMenu';
 
 const DEBOUNCE_TIME = 200;
 
@@ -74,6 +75,13 @@ class FindCard extends React.Component {
 
 	setExpanded = expanded => this.setState({expanded})
 
+	getMenu = card => <CardMenu
+		card={card}
+		deck={this.props.deck}
+		addCard={this.props.addCard}
+		removeCard={this.props.removeCard}
+	/>
+
 	render() {	
 		return <div>
 			<input 
@@ -126,6 +134,7 @@ class FindCard extends React.Component {
 						cards={this.state.results}
 						expanded={this.state.expanded}
 						setExpanded={this.setExpanded}
+						getMenu={this.getMenu}
 					/>
 					: null
 			} 

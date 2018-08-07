@@ -44,6 +44,8 @@ const ImportList = ({ completeImport }) => {
 			const planeswalker = [];
 			const unset = [];
 
+			deck.cards = cardData.map(card => card.name);
+
 			cardData.forEach(card => {
 				if (card.types.indexOf("Land") > -1) return land.push(card);
 				if (card.types.indexOf("Creature") > -1) return creature.push(card);

@@ -10,7 +10,8 @@ class App extends Component {
     this.state = {
       expanded: -1,
       deck: {
-        sections: []
+        sections: [],
+        cards: []
       }
     }
   }
@@ -43,6 +44,43 @@ class App extends Component {
   setDeck = deck => {
     this.setState({deck});
   }
+  addCard = card => {
+    const {deck} = this.state;
+    console.log('ADD CARD NOT COMPLETE, ADD SECTION CORRECTLY, REBUILD FROM CARD LIST?')
+
+    //TODO: Add section sensibly here
+    const importSection = deck.sections.find(sec => sec.title === 'Found') || {title: 'Found', cards:[]};
+    importSection.cards.push(card);
+
+    this.setDeck({
+      ...deck,
+      cards: deck.cards = [
+        ...deck.cards,
+        card.name
+      ],
+      sections: [
+        importSection
+      ]
+    });
+  }
+  removeCard = card => {
+    const {deck} = this.state;
+    const ind = deck.cards.lastIndexOf(card.name);
+
+    console.log('REMOVE CARD NOT COMPLETE, REMOVE CORRECTLY, REBUILD FROM CARD LIST?')
+
+    //TODO: Remove from section here
+    const importSection = deck.sections.find(sec => sec.title === 'Found') || {title: 'Found', cards:[]};
+    importSection.cards.push(card);
+
+    this.setDeck({
+      ...deck,
+      cards: deck.cards = deck.cards.filter((card, ii) => ii !== ind),
+      sections: [
+        importSection
+      ]
+    });
+  }
 
   render() {
     return (
@@ -60,7 +98,7 @@ class App extends Component {
           })}
         </ul>
 
-        <FindCard />
+        <FindCard deck={this.state.deck} addCard={this.addCard} removeCard={this.removeCard}/>
       </div>
     );
   }
