@@ -38,8 +38,6 @@ class CardSection extends React.Component {
 		const {cards, title, expanded, getMenu} = this.props;
 		const isExpanded = expanded > -1 && expanded < cards.length-1;
 
-		console.log(cards);
-
 		return <div>
 			<h2>{title}</h2>
 			<StyledContainer>

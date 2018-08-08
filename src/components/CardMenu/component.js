@@ -19,13 +19,10 @@ const StyledButton = styled.button`
 
 `
 
-
 class CardSection extends React.Component {
 	render(){
 		const {deck, card, addCard, removeCard} = this.props;
-
-		console.log(deck.cards);
-		const count = deck.cards.filter(check => check === card.name).length;
+		const count = deck ? deck.cards.filter(check => check.name === card.name).length : 0;
 
 		return <StyledList>
 			<StyledItem><StyledButton onClick={() => addCard(card)}>+</StyledButton></StyledItem>
