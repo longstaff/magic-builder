@@ -3,6 +3,7 @@ import CardSection from '../CardSection';
 import ImportList from '../ImportList';
 
 import { getCommanderTypeSections } from '../../utils/sections';
+import { initRepo, saveData } from '../../data/git'
 
 class DeckNew extends React.Component {
 	constructor(props){
@@ -12,6 +13,10 @@ class DeckNew extends React.Component {
 			expanded: -1,
 		}
 	}
+	componentDidMount() {
+		initRepo();
+	}
+
 	setExpanded = (index) => {
 		this.setState({
 			expanded: index
@@ -26,6 +31,10 @@ class DeckNew extends React.Component {
 				sections
 			}});
 		})
+	}
+
+	commit = () => {
+		saveData('initial import', {main: this.state.deck ? this.state.deck.cards : []});
 	}
 
 	render(){
@@ -50,6 +59,8 @@ class DeckNew extends React.Component {
 			        </ul>
 			        : null
 		    }
+
+		    <button onClick={this.commit}>Save</button> 
 		</div>
 	}
 }

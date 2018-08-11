@@ -1,40 +1,19 @@
 import React from 'react';
-import CardSection from '../CardSection';
-
 import { Link } from 'react-router-dom';
+import CardSection from '../CardSection';
+import History from '../History';
+import { getCommanderTypeSections } from '../../utils/sections';
+import { getData } from '../../data/data';
+import { jsonToLocal } from '../../data/storage';
+import { retrieveData } from '../../data/git';
 
 class DeckView extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			deck: {cards: [
-					{name: 'karona, false god'},
-					{name: 'forest'},
-					{name: 'mountain'},
-					{name: 'island'},
-					{name: 'plains'},
-					{name: 'swamp'},
-					{name: 'temple of the false god'},
-				],
-				sections: [{
-					title: 'Ye God',
-					cards: [
-						{name: 'karona, false god'},
-					]
-				},
-				{
-					title: 'Lands',
-					cards: [
-						{name: 'forest'},
-						{name: 'mountain'},
-						{name: 'island'},
-						{name: 'plains'},
-						{name: 'swamp'},
-						{name: 'temple of the false god'},
-					]
-				}]
-			},
+			deck: null,
 			expanded: 0,
+			error: null
 		}
 	}
 	setExpanded = (index) => {
@@ -45,6 +24,24 @@ class DeckView extends React.Component {
 
 	componentDidMount () {
 		window.addEventListener('keyup', this.onKeyUp)
+
+		const deckId = this.props.match.params.id;
+
+		getData(deckId).then(data => {
+			if(!data) {
+				this.setState({
+					error: 'deck not found'
+				});
+				return;
+			}
+
+			jsonToLocal(data);
+			retrieveData().then(data => {
+				getCommanderTypeSections(data.main).then((sections) => {
+					this.setState({deck: {cards: data.main, sections}})
+				})
+			});
+		});
 	}
 	componentWillUnmount() {
 		window.removeEventListener('keyup', this.onKeyUp)
@@ -62,10 +59,15 @@ class DeckView extends React.Component {
 	}
 
 	render(){
-		const {expanded, deck} = this.state;
+		const {expanded, deck, error} = this.state;
 
-		return <div>
+		return error ? 
+			<h1>{`Error: ${error}`}</h1>
+			: deck ? <div>
 			<Link to="/deck/slug/edit">Edit</Link>
+
+			<History />
+
 			<ul>
 				{deck.sections.map((section, index, arr) => {
 					const offset = arr.slice(0, index).reduce((prev, next) => prev + next.cards.length, 0);
@@ -78,7 +80,7 @@ class DeckView extends React.Component {
 					</li>
 				})}
 	        </ul>
-	    </div>
+	    </div> : <h1>Loading</h1>
 	}
 }
 

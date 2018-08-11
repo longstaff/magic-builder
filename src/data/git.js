@@ -1,5 +1,6 @@
 const BrowserFS = require('browserfs');
 const git = require('isomorphic-git');
+const jsdiff = require('diff');
 
 let fs;
 const dir = '.';
@@ -37,7 +38,7 @@ const readFile = (file, title) => {
 }
 
 
-export const init = () => {
+export const initGit = () => {
 	return fs ? Promise.resolve() : new Promise((pass, reject) => {
 		BrowserFS.configure({ fs: "LocalStorage", options: {} }, function (err) {
 		  if (err) reject(err);
@@ -47,9 +48,14 @@ export const init = () => {
 	})
 }
 
+export const resetData = () => {
+	localStorage.clear();
+	fs = null;
+}
 
 export const initRepo = () => {
-	return init().then(pass => {
+	resetData();
+	return initGit().then(pass => {
 		const repo = getRepo();
 		git.init(repo)
 			.then(pass => {
@@ -58,12 +64,12 @@ export const initRepo = () => {
 	})
 }
 
-export const saveData = (message, {config, main, side, maybe}) => {
-	return init().then(pass => {
+export const saveData = (message, {config={}, main=[], side=[], maybe=[]}) => {
+	return initGit().then(pass => {
 		const confPromise = writeFile(fs, CONF_FILE, JSON.stringify(config));
-		const mainPromise = writeFile(fs, MAIN_FILE, main.join(DELINIATOR));
-		const sidePromise = writeFile(fs, SIDE_FILE, side.join(DELINIATOR));
-		const maybePromise = writeFile(fs, MAYB_FILE, maybe.join(DELINIATOR));
+		const mainPromise = writeFile(fs, MAIN_FILE, JSON.stringify(main));
+		const sidePromise = writeFile(fs, SIDE_FILE, JSON.stringify(side));
+		const maybePromise = writeFile(fs, MAYB_FILE,JSON.stringify(maybe));
 
 		return Promise.all([confPromise, mainPromise, sidePromise, maybePromise])
 			.then(pass => {
@@ -88,7 +94,7 @@ export const saveData = (message, {config, main, side, maybe}) => {
 }
 
 export const retrieveData = () => {
-	return init().then(pass => {
+	return initGit().then(pass => {
 		const confPromise = readFile(fs, CONF_FILE);
 		const mainPromise = readFile(fs, MAIN_FILE);
 		const sidePromise = readFile(fs, SIDE_FILE);
@@ -98,16 +104,58 @@ export const retrieveData = () => {
 			.then(pass => {
 				return {
 					config: JSON.parse(pass[0]),
-					main: pass[1].split(DELINIATOR),
-					side: pass[2].split(DELINIATOR),
-					maybe: pass[3].split(DELINIATOR),
+					main: JSON.parse(pass[1]),
+					side: JSON.parse(pass[2]),
+					maybe: JSON.parse(pass[3]),
 				}
 			})
 	})
 }
 
+export const getHistory = (branchname) => {
+	return initGit().then(pass => {
+		const repo = getRepo();
+		return git.log({...repo, depth: 5}).then(commits => {
+			return Promise.all(commits.map(commit => {
+				const current = git.readObject({...repo, oid: commit.oid, filepath: MAIN_FILE});
+				const old = commit.parent[0] ? 
+					git.readObject({...repo, oid:commit.parent[0] , filepath: MAIN_FILE}):
+					Promise.resolve({})
+
+				return Promise.all([old, current])
+				//	.then((vals) => (
+				//		console.log('VALS', vals) && 
+				//		Promise.all(vals.map((val) => val.type === 'blob' ? git.readObject({...repo, oid: val.oid}) : val))
+				//	))
+					.then(data => {
+						const old = data[0].object ? data[0].object.toString('utf8') : '';
+						const current = data[1].object ? data[1].object.toString('utf8') : '';
+
+						let added = [];
+						let removed = [];
+
+						if(old && current) {
+							const diff = jsdiff.diffArrays(JSON.parse(old), JSON.parse(current), {
+								comparator: (l,r) => l.name === r.name
+							}).forEach(res => {
+								if(res.added) added.push(...res.value);
+								if(res.removed) removed.push(...res.value);
+							});
+
+						}
+
+						return {
+							...commit,
+							diff: {added, removed}
+						}
+					})
+			}))
+		})
+	})
+}
+
 export const switchBranch = (branchname) => {
-	return init().then(pass => {
+	return initGit().then(pass => {
 		const repo = getRepo();
 		return git.checkout({
 			...repo,
@@ -117,7 +165,7 @@ export const switchBranch = (branchname) => {
 }
 
 export const createBranch = (branchname) => {
-	return init().then(pass => {
+	return initGit().then(pass => {
 		const repo = getRepo();
 		return git.branch({
 			...repo,
@@ -127,7 +175,7 @@ export const createBranch = (branchname) => {
 }
 
 export const listBranches = () => {
-	return init().then(pass => {
+	return initGit().then(pass => {
 		const repo = getRepo();
 		return git.listBranches(repo)
 	})

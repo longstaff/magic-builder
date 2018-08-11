@@ -27,8 +27,8 @@ const ImportList = ({ completeImport }) => {
 		deck.cards = cards;
 		return deck;
 	}
-	
-	const onSubmit = () => parseFields(text.value).then(data => completeImport(data))
+
+	const onSubmit = () => completeImport(parseFields(text.value))
 
 	return <div>
 		<textarea ref={node => text = node}></textarea>

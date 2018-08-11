@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "browserfs": "^1.4.3",
+    "diff": "^3.5.0",
     "isomorphic-git": "^0.24.4",
     "mana-font": "^1.4.1",
     "mtgsdk": "^0.3.0",
