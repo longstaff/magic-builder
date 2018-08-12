@@ -42,7 +42,7 @@ const StyledTitle = styled.span`
 const StyledMana = styled.span`
     font-family: serif;
     font-weight: bold;
-    font-size: 0.75em;
+    font-size: 0.55em;
     align-self: center;
 `;
 

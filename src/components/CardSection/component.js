@@ -23,6 +23,8 @@ const StyledCard = styled.li`
 	position: absolute;
 	top: ${({index, expandedBefore}) => (index * offset) + (expandedBefore ? (cardHeight - offset - bottomOverlap) : 0)}px;
 	transition: all 0.2s ease-in-out;
+    left: 50%;
+    margin-left: -112px;
 `
 const StyledMenuHolder = styled.div`
 	position: absolute;

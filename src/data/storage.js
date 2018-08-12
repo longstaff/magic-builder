@@ -6,7 +6,7 @@ import { dataMap } from './tempData';
 */
 const getData = () => {
 	const data = localStorage.getItem(DATA_KEY);
-	return data ? JSON.parse(data) : dataMap;
+	return data && JSON.parse(data) ? JSON.parse(data) : dataMap;
 }
 const setData = json => {
 	localStorage.setItem(DATA_KEY, JSON.stringify(json));
