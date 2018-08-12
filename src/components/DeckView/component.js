@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom';
 import CardSection from '../CardSection';
 import History from '../History';
 import { getCommanderTypeSections } from '../../utils/sections';
-import { getData } from '../../data/data';
-import { jsonToLocal } from '../../data/storage';
-import { retrieveData } from '../../data/git';
+
+import { loadFile } from '../../data';
 
 class DeckView extends React.Component {
 	constructor(props){
@@ -24,22 +23,16 @@ class DeckView extends React.Component {
 
 	componentDidMount () {
 		window.addEventListener('keyup', this.onKeyUp)
-
 		const deckId = this.props.match.params.id;
 
-		getData(deckId).then(data => {
-			if(!data) {
-				this.setState({
-					error: 'deck not found'
-				});
-				return;
-			}
-
-			jsonToLocal(data);
-			retrieveData().then(data => {
-				getCommanderTypeSections(data.main).then((sections) => {
-					this.setState({deck: {cards: data.main, sections}})
-				})
+		loadFile(deckId).then(data => {
+			getCommanderTypeSections(data.main).then((sections) => {
+				this.setState({deck: {cards: data.main, sections, config: data.config}})
+			})
+		}, err => {
+			console.log('FAILED', err)
+			this.setState({
+				error: 'deck not found'
 			});
 		});
 	}
@@ -60,11 +53,15 @@ class DeckView extends React.Component {
 
 	render(){
 		const {expanded, deck, error} = this.state;
+		const config = deck && deck.config || {name: '', description: ''}
 
 		return error ? 
 			<h1>{`Error: ${error}`}</h1>
 			: deck ? <div>
-			<Link to="/deck/slug/edit">Edit</Link>
+			<Link to={`/deck/${this.props.match.params.id}/edit`}>Edit</Link>
+
+			{ config.name ? <h1>{config.name}</h1> : null }
+			{ config.description ? <p>{config.description}</p> : null }
 
 			<History />
 

@@ -87,8 +87,6 @@ export const data = {
   "ffffaad0-e136-49dd-8361-a3f53276e03f": "eyJob29rcyI6ImI0ODcxNmMyLTI5ODQtNGY2Mi1iMTdkLTQ4OWVkYjM2MmUxYiIsImluZm8iOiIwYTM5N2ZhYS01OGNjLTRmM2QtOTgzMi05NzQ0YTE4OTI4ZTAiLCJvYmplY3RzIjoiZWM4ZjMxNjktZDU1Yy00MTNhLTkxZjktOWU1Nzc1MDViMTY2IiwicmVmcyI6ImE5Y2QzYWM0LWRlMTktNDQ3ZC1hZjQxLTk0OTZkZmVlOGJmYyIsImNvbmZpZyI6ImUyZDY4YzcyLTAyMWQtNGM3Ny1iMDRiLWZkY2QyNDJiYjdhOSIsIkhFQUQiOiIxNWZmM2YxOC1hM2U4LTRlODItODg5Yy03ZjUyMWZjM2MzMjciLCJpbmRleCI6ImE2YzFlMDc0LWYxYjEtNDMwNS05MjU4LWQzMjQ4ZjVkMGUzNCJ9"
 }
 
-const dataMap = {
+export const dataMap = {
   slug: data
 }
-
-export const getData = key => Promise.resolve(dataMap[key]);

@@ -1,11 +1,10 @@
+import { DATA_KEY } from '../constants'
 const BrowserFS = require('browserfs');
 const git = require('isomorphic-git');
 const jsdiff = require('diff');
 
 let fs;
 const dir = '.';
-
-const DELINIATOR = '|';
 
 const CONF_FILE = 'config.json';
 const MAIN_FILE = 'main.md';
@@ -19,6 +18,37 @@ const getAuthor = () => {
 	return {name:'admin', email:'admin@email.com'};
 }
 
+/*
+ JSON to memory and back
+ */
+const localToJson = () => {
+    const json = {};
+    let key, i=0;
+	for (; key = localStorage.key(i); i++) {
+		if(key !== DATA_KEY) json[key] = localStorage.getItem(key);
+	}
+	return Promise.resolve(json);
+}
+
+const jsonToLocal = json => 
+	resetData().then(() => {
+		Object.entries(json).forEach(([key, val]) => {
+			localStorage.setItem(key, val);
+		});
+		return true;
+	});
+
+
+/*
+ Generics
+ */
+const resetData = () => {
+	fs = null;
+	const keep = localStorage.getItem(DATA_KEY);
+	localStorage.clear();
+	localStorage.setItem(DATA_KEY, keep);
+	return initFileSystem();
+}
 
 const writeFile = (file, title, content) => {
 	return new Promise((resolve, reject) => file.writeFile(
@@ -37,8 +67,7 @@ const readFile = (file, title) => {
 	))
 }
 
-
-export const initGit = () => {
+const initFileSystem = () => {
 	return fs ? Promise.resolve() : new Promise((pass, reject) => {
 		BrowserFS.configure({ fs: "LocalStorage", options: {} }, function (err) {
 		  if (err) reject(err);
@@ -48,24 +77,26 @@ export const initGit = () => {
 	})
 }
 
-export const resetData = () => {
-	localStorage.clear();
-	fs = null;
-}
+/*
+ External
+ */
+export const writeDataToMemory = (data) => jsonToLocal(data);
+export const getMemory = () => localToJson();
+export const clearMemory = () => resetData();
 
 export const initRepo = () => {
 	resetData();
-	return initGit().then(pass => {
+	return initFileSystem().then(pass => {
 		const repo = getRepo();
 		git.init(repo)
 			.then(pass => {
-				return saveData('Initialise repo', {config: {}, main: [], side: [], maybe: []});
+				return commit('Initialise repo', {config: {}, main: [], side: [], maybe: []});
 			});
 	})
 }
 
-export const saveData = (message, {config={}, main=[], side=[], maybe=[]}) => {
-	return initGit().then(pass => {
+export const commit = (message, {config={}, main=[], side=[], maybe=[]}) => {
+	return initFileSystem().then(pass => {
 		const confPromise = writeFile(fs, CONF_FILE, JSON.stringify(config));
 		const mainPromise = writeFile(fs, MAIN_FILE, JSON.stringify(main));
 		const sidePromise = writeFile(fs, SIDE_FILE, JSON.stringify(side));
@@ -94,7 +125,7 @@ export const saveData = (message, {config={}, main=[], side=[], maybe=[]}) => {
 }
 
 export const retrieveData = () => {
-	return initGit().then(pass => {
+	return initFileSystem().then(pass => {
 		const confPromise = readFile(fs, CONF_FILE);
 		const mainPromise = readFile(fs, MAIN_FILE);
 		const sidePromise = readFile(fs, SIDE_FILE);
@@ -113,7 +144,7 @@ export const retrieveData = () => {
 }
 
 export const getHistory = (branchname) => {
-	return initGit().then(pass => {
+	return initFileSystem().then(pass => {
 		const repo = getRepo();
 		return git.log({...repo, depth: 5}).then(commits => {
 			return Promise.all(commits.map(commit => {
@@ -123,10 +154,6 @@ export const getHistory = (branchname) => {
 					Promise.resolve({})
 
 				return Promise.all([old, current])
-				//	.then((vals) => (
-				//		console.log('VALS', vals) && 
-				//		Promise.all(vals.map((val) => val.type === 'blob' ? git.readObject({...repo, oid: val.oid}) : val))
-				//	))
 					.then(data => {
 						const old = data[0].object ? data[0].object.toString('utf8') : '';
 						const current = data[1].object ? data[1].object.toString('utf8') : '';
@@ -155,7 +182,7 @@ export const getHistory = (branchname) => {
 }
 
 export const switchBranch = (branchname) => {
-	return initGit().then(pass => {
+	return initFileSystem().then(pass => {
 		const repo = getRepo();
 		return git.checkout({
 			...repo,
@@ -165,7 +192,7 @@ export const switchBranch = (branchname) => {
 }
 
 export const createBranch = (branchname) => {
-	return initGit().then(pass => {
+	return initFileSystem().then(pass => {
 		const repo = getRepo();
 		return git.branch({
 			...repo,
@@ -175,7 +202,7 @@ export const createBranch = (branchname) => {
 }
 
 export const listBranches = () => {
-	return initGit().then(pass => {
+	return initFileSystem().then(pass => {
 		const repo = getRepo();
 		return git.listBranches(repo)
 	})

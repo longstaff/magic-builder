@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import {initGit} from '../../data/git'
 import CardSection from '../CardSection';
 import FindCard from '../FindCard';
 import ImportList from '../ImportList';
@@ -12,11 +11,6 @@ import DeckEdit from '../DeckEdit';
 
 
 class App extends Component {
-
-  componentDidMount(){
-    initGit()
-  }
-
   render() {
     return (
       <BrowserRouter>

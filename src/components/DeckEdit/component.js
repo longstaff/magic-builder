@@ -1,45 +1,31 @@
 import React from 'react';
-import CardMenu from '../CardMenu';
-import FindCard from '../FindCard';
-import CardSection from '../CardSection';
+import EditDeck from '../EditDeck'
+import EditList from '../EditList'
 
 import { getCommanderTypeSections } from '../../utils/sections';
+import { loadFile, saveState } from '../../data'
 
 class DeckEdit extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			deck: {cards: [
-					{name: 'Karona, false god'},
-					{name: 'Forest'},
-					{name: 'Mountain'},
-					{name: 'Island'},
-					{name: 'Plains'},
-					{name: 'Swamp'},
-					{name: 'Temple of the false god'},
-				],
-				sections: [{
-					title: 'Ye God',
-					cards: [
-						{name: 'Karona, false god'},
-					]
-				},
-				{
-					title: 'Lands',
-					cards: [
-						{name: 'Forest'},
-						{name: 'Mountain'},
-						{name: 'Island'},
-						{name: 'Plains'},
-						{name: 'Swamp'},
-						{name: 'Temple of the false god'},
-					]
-				}]
-			},
+			deck: null,
 			expanded: -1,
 			results: []
 		}
+	}
+
+	componentDidMount () {
+		const deckId = this.props.match.params.id;
+
+		loadFile(deckId).then(data => {
+			this.setDeck({cards: data.main, config: data.config});
+		}, err => {
+			this.setState({
+				error: 'deck not found'
+			});
+		});
 	}
 
 	setDeck = deck => {
@@ -51,58 +37,20 @@ class DeckEdit extends React.Component {
 			}});
 		})
 	}
-	addCard = card => {
-		const {deck = { cards: [] }} = this.state;
 
-		this.setDeck({
-			...deck,
-			cards: deck.cards = [
-				...deck.cards,
-				{name: card.name}
-			]
-		});
+	commit = () => {
+		saveState(this.props.match.params.id, 'edit', {config: this.state.deck ? this.state.deck.config : {}, main: this.state.deck ? this.state.deck.cards : []});
 	}
-	removeCard = card => {
-		const {deck = { cards: [] }} = this.state;
-
-		this.setDeck({
-			...deck,
-			cards: [
-				...deck.cards.filter((test) => test.name !== card.name),
-				...deck.cards.filter((test) => test.name === card.name).slice(1)
-			]
-		});
-	}
-
-	setExpanded = (index) => {
-		this.setState({
-			expanded: index
-		});
-	}
-
-	getMenu = card => <CardMenu
-		card={card}
-		deck={this.state.deck}
-		addCard={this.addCard}
-		removeCard={this.removeCard}
-	/>
 
 	render() {
-		return <div>
-			{
-				this.state.deck && this.state.deck.cards.length ?
-					<CardSection
-						title={`Results (${this.state.results.length})`}
-						cards={this.state.deck.cards}
-						expanded={this.state.expanded}
-						setExpanded={this.setExpanded}
-						getMenu={this.getMenu}
-					/>
-					: null
-			} 
+		const { deck, error } = this.state;
 
-			<FindCard deck={this.state.deck} addCard={this.addCard} removeCard={this.removeCard}/>
-		</div>
+		return deck ? <div>
+			<EditDeck deck={deck} setDeck={this.setDeck} />
+			<EditList deck={deck} setDeck={this.setDeck} />
+			
+		    <button onClick={this.commit}>Save</button> 
+		</div> : error ? <div>{error}</div> : <div>Loading</div>
 	}
 }
 
