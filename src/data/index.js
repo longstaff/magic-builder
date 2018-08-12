@@ -4,7 +4,6 @@ import * as git from './git';
 export const loadFile = (slug, initGit = true) => 
 	storage.loadData(slug).then(
 		data => {
-			console.log('DATA', data);
 			if (data) {
 				const writePromise = initGit !== false ? git.writeDataToMemory(data) : Promise.resolve();
 				return writePromise.then(() => git.retrieveData());
@@ -15,7 +14,6 @@ export const loadFile = (slug, initGit = true) =>
 			}
 		},
 		err => {
-			console.log('ERROR', err);
 			const writePromise = initGit !== false ? git.clearMemory() : Promise.resolve();
 			return writePromise.then(() => Promise.reject(404));
 		}
@@ -28,5 +26,7 @@ export const saveState = (slug, message, data) => {
 }
 
 export const checkSlug = slug => storage.isSlugUsed(slug);
+
+export const getDeckList = slug => storage.getDeckList();
 
 export const initRepo = git.initRepo

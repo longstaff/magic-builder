@@ -1,8 +1,6 @@
 import React from 'react';
 import EditDeck from '../EditDeck'
 import EditList from '../EditList'
-
-import { getCommanderTypeSections } from '../../utils/sections';
 import { loadFile, saveState } from '../../data'
 
 class DeckEdit extends React.Component {

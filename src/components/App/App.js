@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import CardSection from '../CardSection';
-import FindCard from '../FindCard';
-import ImportList from '../ImportList';
 
 import Home from '../Home';
 import DeckNew from '../DeckNew';

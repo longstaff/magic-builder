@@ -2,8 +2,6 @@ import React from 'react';
 import EditList from '../EditList'
 import EditDeck from '../EditDeck'
 import ImportList from '../ImportList';
-
-import { getCommanderTypeSections } from '../../utils/sections';
 import { initRepo, saveState, checkSlug } from '../../data'
 
 class DeckNew extends React.Component {
@@ -41,7 +39,7 @@ class DeckNew extends React.Component {
 	}
 
 	render(){
-		const {expanded, config, cards} = this.state;
+		const {config, cards} = this.state;
 
 		return <div>
 			<EditDeck config={config} setConfig={config => this.setState({config})}/>

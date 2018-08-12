@@ -27,9 +27,6 @@ export const getCardList = ({search='', searchField='name', pageSize, colours=[]
 
 		if (colours.length > 0 && (colourMatch === 'exact' || colourMatch === 'exclusive')) {
 			return uniqueCards.filter(card => {
-
-				console.log(card.colorIdentity)
-
 				return card.colorIdentity && 
 					((colourMatch === 'exact' && card.colorIdentity.length === colours.length) || colourMatch !== 'exact') && 
 					card.colorIdentity.every(col => colours.indexOf(col.toLowerCase()) > -1);

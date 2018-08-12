@@ -1,9 +1,7 @@
 import React from 'react';
 import CardMenu from '../CardMenu';
 import CardSection from '../CardSection';
-import FindCard from '../FindCard';			
-
-import { getCommanderTypeSections } from '../../utils/sections';
+import FindCard from '../FindCard';
 
 class EditList extends React.Component {
 	constructor(props) {

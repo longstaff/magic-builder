@@ -6,7 +6,6 @@ import { dataMap } from './tempData';
 */
 const getData = () => {
 	const data = localStorage.getItem(DATA_KEY);
-	console.log(data, dataMap)
 	return data ? JSON.parse(data) : dataMap;
 }
 const setData = json => {
@@ -18,17 +17,9 @@ const setData = json => {
 */
 export const loadData = slug => {
 	const json = getData();
-
-	console.log(json)
-
 	return Promise.resolve(json[slug] ? json[slug] : null);
 }
 export const saveSlug = (slug, data) => {
-	console.log('SAVING SLUG', data, {
-		...getData(),
-		[slug]: data
-	})
-
 	setData({
 		...getData(),
 		[slug]: data
@@ -45,4 +36,8 @@ export const deleteSlug = slug => {
 export const isSlugUsed = slug => {
 	const json = getData();
 	return Promise.resolve(!!json[slug]);
+}
+export const getDeckList = slug => {
+	const json = getData();
+	return Promise.resolve(Object.keys(json));
 }

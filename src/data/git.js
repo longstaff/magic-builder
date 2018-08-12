@@ -23,8 +23,9 @@ const getAuthor = () => {
  */
 const localToJson = () => {
     const json = {};
-    let key, i=0;
-	for (; key = localStorage.key(i); i++) {
+    let key;
+	for (let i=0; localStorage.key(i) !== null; i++) {
+		key = localStorage.key(i);
 		if(key !== DATA_KEY) json[key] = localStorage.getItem(key);
 	}
 	return Promise.resolve(json);
@@ -162,7 +163,7 @@ export const getHistory = (branchname) => {
 						let removed = [];
 
 						if(old && current) {
-							const diff = jsdiff.diffArrays(JSON.parse(old), JSON.parse(current), {
+							jsdiff.diffArrays(JSON.parse(old), JSON.parse(current), {
 								comparator: (l,r) => l.name === r.name
 							}).forEach(res => {
 								if(res.added) added.push(...res.value);

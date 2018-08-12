@@ -30,7 +30,6 @@ class DeckView extends React.Component {
 				this.setState({deck: {cards: data.main, sections, config: data.config}})
 			})
 		}, err => {
-			console.log('FAILED', err)
 			this.setState({
 				error: 'deck not found'
 			});
@@ -53,7 +52,7 @@ class DeckView extends React.Component {
 
 	render(){
 		const {expanded, deck, error} = this.state;
-		const config = deck && deck.config || {name: '', description: ''}
+		const config = deck && deck.config ? deck.config : {name: '', description: ''};
 
 		return error ? 
 			<h1>{`Error: ${error}`}</h1>
@@ -68,9 +67,9 @@ class DeckView extends React.Component {
 			<ul>
 				{deck.sections.map((section, index, arr) => {
 					const offset = arr.slice(0, index).reduce((prev, next) => prev + next.cards.length, 0);
-					return <li key={section.title}><CardSection
+					return <li key={`${index}-${section.title}`}><CardSection
 						title={section.title}
-						expanded={this.state.expanded - offset}
+						expanded={expanded - offset}
 						setExpanded={index => this.setExpanded(offset + index)}
 						cards={section.cards}
 						/>

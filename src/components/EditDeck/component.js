@@ -1,9 +1,4 @@
 import React from 'react';
-import CardMenu from '../CardMenu';
-import CardSection from '../CardSection';
-import FindCard from '../FindCard';			
-
-import { getCommanderTypeSections } from '../../utils/sections';
 
 class EditDeck extends React.Component {
 	constructor(props) {
@@ -28,7 +23,6 @@ class EditDeck extends React.Component {
 	}
 
 	render() {
-		const { expanded } = this.state;
 		const { config = {name: '', description: ''} } = this.props;
 
 		return <div>
