@@ -10,9 +10,10 @@ class DeckEdit extends React.Component {
 		super(props);
 
 		this.state = {
-			deck: null,
+			config: {},
+			cards: [],
 			expanded: -1,
-			results: []
+			loaded: false
 		}
 	}
 
@@ -20,7 +21,7 @@ class DeckEdit extends React.Component {
 		const deckId = this.props.match.params.id;
 
 		loadFile(deckId).then(data => {
-			this.setDeck({cards: data.main, config: data.config});
+			this.setState({cards: data.main, config: data.config, loaded:true});
 		}, err => {
 			this.setState({
 				error: 'deck not found'
@@ -28,26 +29,16 @@ class DeckEdit extends React.Component {
 		});
 	}
 
-	setDeck = deck => {
-		//If sorting === types
-		getCommanderTypeSections(deck.cards).then(sections => {
-			this.setState({deck: {
-				...deck,
-				sections
-			}});
-		})
-	}
-
 	commit = () => {
-		saveState(this.props.match.params.id, 'edit', {config: this.state.deck ? this.state.deck.config : {}, main: this.state.deck ? this.state.deck.cards : []});
+		saveState(this.props.match.params.id, 'edit', {config: this.state.config, main: this.state.cards});
 	}
 
 	render() {
-		const { deck, error } = this.state;
+		const { config, cards, loaded, error } = this.state;
 
-		return deck ? <div>
-			<EditDeck deck={deck} setDeck={this.setDeck} />
-			<EditList deck={deck} setDeck={this.setDeck} />
+		return loaded ? <div>
+			<EditDeck config={config} setConfig={config => this.setState({config})} />
+			<EditList cards={cards} setCards={cards => this.setState({cards})} />
 			
 		    <button onClick={this.commit}>Save</button> 
 		</div> : error ? <div>{error}</div> : <div>Loading</div>

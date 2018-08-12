@@ -36,12 +36,13 @@ class CardSection extends React.Component {
 
 	render(){
 		const {cards, title, expanded, getMenu} = this.props;
-		const isExpanded = expanded > -1 && expanded < cards.length-1;
+		const isExpanded = expanded > -1 && expanded < cards.length;
+		const expandHeight = expanded > -1 && expanded < cards.length - 1;
 
 		return <div>
 			<h2>{title}</h2>
 			<StyledContainer>
-				<StyledList count={cards.length} expanded={isExpanded}>
+				<StyledList count={cards.length} expanded={expandHeight}>
 					{cards.map((card, index) => 
 						<StyledCard index={index} expandedBefore={expanded > -1 && expanded < index} key={card.name} onClick={() => this.props.setExpanded(index)}>
 							<Card data={card} expanded={index===expanded || index === cards.length-1}/>

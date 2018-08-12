@@ -77,7 +77,7 @@ class FindCard extends React.Component {
 
 	getMenu = card => <CardMenu
 		card={card}
-		deck={this.props.deck}
+		cards={this.props.cards}
 		addCard={this.props.addCard}
 		removeCard={this.props.removeCard}
 	/>

@@ -15,26 +15,20 @@ class EditList extends React.Component {
 	}
 
 	addCard = card => {
-		const {deck = { cards: [] }} = this.props;
+		const {cards = []} = this.props;
 
-		this.props.setDeck({
-			...deck,
-			cards: deck.cards = [
-				...deck.cards,
-				{name: card.name}
-			]
-		});
+		this.props.setCards([
+			...cards,
+			{name: card.name}
+		]);
 	}
 	removeCard = card => {
-		const {deck = { cards: [] }} = this.props;
+		const {cards = []} = this.props;
 
-		this.props.setDeck({
-			...deck,
-			cards: [
-				...deck.cards.filter((test) => test.name !== card.name),
-				...deck.cards.filter((test) => test.name === card.name).slice(1)
-			]
-		});
+		this.props.setCards([
+			...cards.filter((test) => test.name !== card.name),
+			...cards.filter((test) => test.name === card.name).slice(1)
+		]);
 	}
 
 	setExpanded = (index) => {
@@ -45,28 +39,28 @@ class EditList extends React.Component {
 
 	getMenu = card => <CardMenu
 		card={card}
-		deck={this.props.deck}
+		cards={this.props.cards}
 		addCard={this.addCard}
 		removeCard={this.removeCard}
 	/>
 
 	render() {
 		const { expanded } = this.state;
-		const { deck } = this.props;
+		const { cards = [] } = this.props;
 
 		return <div>
 			{
-				deck && deck.cards.length ?
+				cards.length ?
 					<CardSection
-						title={`Complete list (${deck.cards.length})`}
-						cards={deck.cards}
+						title={`Complete list (${cards.length})`}
+						cards={cards}
 						expanded={expanded}
 						setExpanded={this.setExpanded}
 						getMenu={this.getMenu}
 					/>
 					: null
 			} 
-			<FindCard deck={deck} addCard={this.addCard} removeCard={this.removeCard}/>
+			<FindCard cards={cards} addCard={this.addCard} removeCard={this.removeCard}/>
 		</div>
 	}
 }

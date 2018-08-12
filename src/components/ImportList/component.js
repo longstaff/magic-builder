@@ -3,13 +3,8 @@ import React from 'react';
 const ImportList = ({ completeImport }) => {
 	let text = null
 
-	const parseFields = input => {
-		const deck = {
-			title: 'Imported deck'
-		}
-
-		const lines = input.split(/\n/g);
-		const cards = lines.map(line => {
+	const parseFields = input => (
+		input.split(/\n/g).map(line => {
 			const results = /(\d+)x (.+?)(#.+)?( \*CMDR\*)?$/.exec(line);
 			const output = [];
 
@@ -23,10 +18,7 @@ const ImportList = ({ completeImport }) => {
 			}
 			return output;
 		}).reduce((all, next) => [...all, ...next], [])
-
-		deck.cards = cards;
-		return deck;
-	}
+	)
 
 	const onSubmit = () => completeImport(parseFields(text.value))
 

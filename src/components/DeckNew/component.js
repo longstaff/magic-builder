@@ -10,10 +10,8 @@ class DeckNew extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			deck: {
-				config: {},
-				cards: []
-			},
+			config: {},
+			cards: [],
 			expanded: -1,
 		}
 	}
@@ -21,12 +19,12 @@ class DeckNew extends React.Component {
 		initRepo();
 	}
 
-	setDeck = deck => {
-		this.setState({deck});
+	setImport = cards => {
+		this.setState({cards});
 	}
 
 	commit = () => {
-		const name = this.state.deck.config.name
+		const name = this.state.config.name
 		if (!name) {
 			alert('Must have a name');
 			return
@@ -38,17 +36,17 @@ class DeckNew extends React.Component {
 				alert('duplicate name found, use a different one');
 				return
 			}
-			saveState(newSlug, 'initial import', {config: this.state.deck.config, main: this.state.deck.cards});
+			saveState(newSlug, 'initial import', {config: this.state.config, main: this.state.cards});
 		})
 	}
 
 	render(){
-		const {expanded, deck} = this.state;
+		const {expanded, config, cards} = this.state;
 
 		return <div>
-			<EditDeck deck={deck} setDeck={this.setDeck}/>
-			<ImportList completeImport={this.setDeck} />
-			<EditList deck={deck} setDeck={this.setDeck} />
+			<EditDeck config={config} setConfig={config => this.setState({config})}/>
+			<ImportList completeImport={this.setImport} />
+			<EditList cards={cards} setCards={cards => this.setState({cards})} />
 			
 			<button onClick={this.commit}>Save</button> 
 		</div>
