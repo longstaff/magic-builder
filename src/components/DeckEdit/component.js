@@ -1,6 +1,7 @@
 import React from 'react';
 import EditDeck from '../EditDeck'
 import EditList from '../EditList'
+import CommitModal from '../CommitModal'
 import { loadFile, saveState } from '../../data'
 
 class DeckEdit extends React.Component {
@@ -11,7 +12,8 @@ class DeckEdit extends React.Component {
 			config: {},
 			cards: [],
 			expanded: -1,
-			loaded: false
+			loaded: false,
+			modal: false,
 		}
 	}
 
@@ -27,18 +29,27 @@ class DeckEdit extends React.Component {
 		});
 	}
 
-	commit = () => {
-		saveState(this.props.match.params.id, 'edit', {config: this.state.config, main: this.state.cards});
+	openPopup = () => {
+		this.setState({modal: true});
+	}
+	modalCommit = message => {
+		saveState(this.props.match.params.id, message, {config: this.state.config, main: this.state.cards});
+		this.setState({modal: false});
+	}
+	modalCancel = () => {
+		this.setState({modal: false});
 	}
 
 	render() {
-		const { config, cards, loaded, error } = this.state;
+		const { config, cards, loaded, error, modal } = this.state;
 
 		return loaded ? <div>
+			{modal ? <CommitModal cancel={this.modalCancel} commit={this.modalCommit}/> : null}
+
 			<EditDeck config={config} setConfig={config => this.setState({config})} />
 			<EditList cards={cards} setCards={cards => this.setState({cards})} />
 			
-		    <button onClick={this.commit}>Save</button> 
+		    <button onClick={this.openPopup}>Save</button> 
 		</div> : error ? <div>{error}</div> : <div>Loading</div>
 	}
 }
