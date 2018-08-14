@@ -34,7 +34,7 @@ class DeckNew extends React.Component {
 				alert('duplicate name found, use a different one');
 				return
 			}
-			saveState(newSlug, 'initial import', {config: this.state.config, main: this.state.cards});
+			saveState(newSlug, 'initial commit', {config: this.state.config, main: this.state.cards});
 		})
 	}
 

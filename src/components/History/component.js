@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { getHistory } from '../../data/git'
+import HistoryList from '../HistoryList';
 import CardSection from '../CardSection';
 
 const StyledHistoryList = styled.ul`
@@ -38,9 +39,7 @@ class History extends React.Component {
 		const commit = commits[index];
 
 		return <div>
-			<ol>
-				{commits.map((com, ind) => <li key={ind}><a onClick={() => this.setState({index: ind})}>{ind === index ? 'x' : 'o'}</a></li>)}
-			</ol>
+			<HistoryList commits={commits} index={index} setIndex={index => this.setState({index})}/>
 			
 			{
 				commit ? <div>
