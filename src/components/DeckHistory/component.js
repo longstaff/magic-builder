@@ -2,12 +2,15 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import CardSection from '../CardSection';
+import History from '../History';
 import { getCommanderTypeSections } from '../../utils/sections';
-import { loadFile } from '../../data';
-
 import { BaseLayout } from '../Layout'
 import { Button } from '../Css'
 
+import { loadFile } from '../../data';
+
+const PAGE_MAIN = 0;
+const PAGE_HISTORY = 1;
 
 const StyledDeckList = styled.ul`
 	margin:0;
@@ -26,7 +29,7 @@ class DeckView extends React.Component {
 		this.state = {
 			deck: null,
 			expanded: 0,
-			error: null,
+			error: null
 		}
 	}
 	setExpanded = (index) => {
@@ -40,9 +43,9 @@ class DeckView extends React.Component {
 		const deckId = this.props.match.params.id;
 
 		loadFile(deckId).then(data => {
-			getCommanderTypeSections(data.main).then((sections) => {
-				this.setState({deck: {cards: data.main, sections, config: data.config}})
-			})
+			//getCommanderTypeSections(data.main).then((sections) => {
+			this.setState({deck: {cards: data.main, config: data.config}})
+			//})
 		}, err => {
 			this.setState({
 				error: 'deck not found'
@@ -64,33 +67,21 @@ class DeckView extends React.Component {
 		}
 	}
 
-	navigateTo = (path) => {
-		this.props.history.push(`/deck/${this.props.match.params.id}/${path}`)
+	onMainNav = () => {
+		const deckId = this.props.match.params.id;
+		this.props.history.push(`/deck/${deckId}`);
 	}
 
 	render(){
-		const {expanded, deck, error, page} = this.state;
+		const {expanded, deck, error} = this.state;
 		const config = deck && deck.config ? deck.config : {name: '', description: ''};
 
 		return deck ? <BaseLayout>
-			<Button onClick={() => this.navigateTo('edit')}>Edit</Button>
-			<Button onClick={() => this.navigateTo('history')}>History</Button>
-
-			{ config.name ? <h1>{config.name}</h1> : null }
-			{ config.description ? <p>{config.description}</p> : null }
-
-			<StyledDeckList>
-				{deck.sections.map((section, index, arr) => {
-					const offset = arr.slice(0, index).reduce((prev, next) => prev + next.cards.length, 0);
-					return <StyledDeckListItem key={`${index}-${section.title}`}><CardSection
-						title={section.title}
-						expanded={expanded - offset}
-						setExpanded={index => this.setExpanded(offset + index)}
-						cards={section.cards}
-						/>
-					</StyledDeckListItem>
-				})}
-	        </StyledDeckList>
+			<Button onClick={this.onMainNav}>Card list</Button>
+			<History 
+				expanded={expanded}
+				setExpanded={this.setExpanded}
+			/>
 		</BaseLayout>: error ? <h1>{`Error: ${error}`}</h1> : <h1>Loading</h1>
 	}
 }

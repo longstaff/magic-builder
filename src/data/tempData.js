@@ -88,5 +88,14 @@ export const data = {
 }
 
 export const dataMap = {
-  slug: data
+  slug: {
+      slug: 'slug',
+      data,
+      summary: {
+        name: 'test',
+        commander: 'Experiment Kraj',
+        description: 'something that goes in here that should show up on the card as we draw it. Should probably truncate as we go along something that goes in here that should show up on the card as we draw it. Should probably truncate as we go along something that goes in here that should show up on the card as we draw it. Should probably truncate as we go along something that goes in here that should show up on the card as we draw it. Should probably truncate as we go along something that goes in here that should show up on the card as we draw it. Should probably truncate as we go along',
+        colours: ['U','G']
+      }
+    }
 }

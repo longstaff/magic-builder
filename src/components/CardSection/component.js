@@ -1,11 +1,15 @@
 import React from 'react';
 import Card from '../Card';
 import styled from 'styled-components';
+import { SectionTitle } from '../Css'
 
 const cardHeight = 310;
 const offset = 40;
 const bottomOverlap = 10;
 
+const StyledWrapper = styled.div`
+	margin-top: 20px;
+`
 const StyledContainer = styled.div`
 	position: relative;
 `
@@ -28,11 +32,14 @@ const StyledCard = styled.li`
 `
 const StyledMenuHolder = styled.div`
 	position: absolute;
-	left: 240px;
+	left: 50%;
+	margin-left: 120px;
 	top: ${({index}) => (index * offset) + 10}px;
 	transition: all 0.2s ease-in-out;
 `
-
+const StyledTitle = styled(SectionTitle)`
+	margin-bottom: 20px;
+`
 
 class CardSection extends React.Component {
 
@@ -41,8 +48,8 @@ class CardSection extends React.Component {
 		const isExpanded = expanded > -1 && expanded < cards.length;
 		const expandHeight = expanded > -1 && expanded < cards.length - 1;
 
-		return <div>
-			<h2>{title}</h2>
+		return <StyledWrapper>
+			<StyledTitle>{title}</StyledTitle>
 			<StyledContainer>
 				<StyledList count={cards.length} expanded={expandHeight}>
 					{cards.map((card, index) => 
@@ -53,7 +60,7 @@ class CardSection extends React.Component {
 
 				{getMenu && isExpanded ? <StyledMenuHolder index={expanded}>{getMenu(cards[expanded])}</StyledMenuHolder> : null }
 			</StyledContainer>
-		</div>
+		</StyledWrapper>
 	}
 }
 

@@ -50,7 +50,7 @@ class EditList extends React.Component {
 			{
 				cards.length ?
 					<CardSection
-						title={`Complete list (${cards.length})`}
+						title={`All cards (${cards.length})`}
 						cards={cards}
 						expanded={expanded}
 						setExpanded={this.setExpanded}

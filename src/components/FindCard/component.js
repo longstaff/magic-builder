@@ -1,9 +1,21 @@
 import React from 'react';
+import styled from 'styled-components';
 import { getCardList } from '../../utils/cache';
 import CardSection from '../CardSection';
 import CardMenu from '../CardMenu';
+import {SectionTitle, TextInput} from '../Css';
 
 const DEBOUNCE_TIME = 200;
+
+const StyledHiddenButton = styled.button`
+	border: 1px solid white;
+	border-radius: 50%;
+	padding:0;
+	background: #ccc;
+  	width: 19px;
+    height: 19px;
+    box-sizing: border-box;
+`
 
 class FindCard extends React.Component {
 	debounce;
@@ -84,11 +96,29 @@ class FindCard extends React.Component {
 
 	render() {	
 		return <div>
-			<input 
+			<SectionTitle>Find a card</SectionTitle>
+
+			<TextInput 
 				value={this.state.search}
 				onChange={this.setSearch}
 			/>
+			<div>
+				<StyledHiddenButton onClick={ev => this.toggleColour('w')}><span className={`ms ms-w${this.state.colours.indexOf('w') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+				<StyledHiddenButton onClick={ev => this.toggleColour('u')}><span className={`ms ms-u${this.state.colours.indexOf('u') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+				<StyledHiddenButton onClick={ev => this.toggleColour('b')}><span className={`ms ms-b${this.state.colours.indexOf('b') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+				<StyledHiddenButton onClick={ev => this.toggleColour('r')}><span className={`ms ms-r${this.state.colours.indexOf('r') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+				<StyledHiddenButton onClick={ev => this.toggleColour('g')}><span className={`ms ms-g${this.state.colours.indexOf('g') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+			</div>
+			<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'exclusive'} type='radio' name='colourMatch' value='exclusive' id='colourMatch-exclusive'/>
+			<label htmlFor="colourMatch-exclusive">Exclusive (ignore other colours)</label>
+			
+			<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'inclusive'} type='radio' name='colourMatch' value='inclusive' id='colourMatch-inclusive'/>
+			<label htmlFor="colourMatch-inclusive">Inclusive (Has at least one of these colours)</label>
+			
+			<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'exact'} type='radio' name='colourMatch' value='exact' id='colourMatch-exact'/>
+			<label htmlFor="colourMatch-exact">Exact (Has these and only these colours)</label>
 
+			{/*
 			<input onChange={this.setSearchField} checked={this.state.searchField === 'name'} type='radio' name='searchField' value='name' id='searchField-name'/>
 			<label htmlFor="searchField-name">Name</label>
 			
@@ -97,6 +127,7 @@ class FindCard extends React.Component {
 			
 			<input onChange={this.setSearchField} checked={this.state.searchField === 'type'} type='radio' name='searchField' value='type' id='searchField-type'/>
 			<label htmlFor="searchField-type">Type</label>
+			*/}
 
 			<select value={this.state.type} onChange={this.setType}>
 				<option value="">Select type to filter</option>
@@ -108,24 +139,6 @@ class FindCard extends React.Component {
 				<option value="planeswalker">Planeswalker</option>
 				<option value="sorcery">Sorcery</option>
 			</select>
-
-			<div>
-				<button onClick={ev => this.toggleColour('w')}><span className={`ms ms-w${this.state.colours.indexOf('w') > -1 ? ' ms-cost' : ''}`}/></button>
-				<button onClick={ev => this.toggleColour('u')}><span className={`ms ms-u${this.state.colours.indexOf('u') > -1 ? ' ms-cost' : ''}`}/></button>
-				<button onClick={ev => this.toggleColour('b')}><span className={`ms ms-b${this.state.colours.indexOf('b') > -1 ? ' ms-cost' : ''}`}/></button>
-				<button onClick={ev => this.toggleColour('r')}><span className={`ms ms-r${this.state.colours.indexOf('r') > -1 ? ' ms-cost' : ''}`}/></button>
-				<button onClick={ev => this.toggleColour('g')}><span className={`ms ms-g${this.state.colours.indexOf('g') > -1 ? ' ms-cost' : ''}`}/></button>
-			</div>
-
-			
-			<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'exclusive'} type='radio' name='colourMatch' value='exclusive' id='colourMatch-exclusive'/>
-			<label htmlFor="colourMatch-exclusive">Exclusive (ignore other colours)</label>
-			
-			<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'inclusive'} type='radio' name='colourMatch' value='inclusive' id='colourMatch-inclusive'/>
-			<label htmlFor="colourMatch-inclusive">Inclusive (Has at least one of these colours)</label>
-			
-			<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'exact'} type='radio' name='colourMatch' value='exact' id='colourMatch-exact'/>
-			<label htmlFor="colourMatch-exact">Exact (Has these and only these colours)</label>
 
 			{
 				this.state.results.length ?

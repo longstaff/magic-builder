@@ -4,6 +4,9 @@ import EditList from '../EditList'
 import CommitModal from '../CommitModal'
 import { loadFile, saveState } from '../../data'
 
+import { BaseLayout } from '../Layout'
+import { Button } from '../Css'
+
 class DeckEdit extends React.Component {
 	constructor(props) {
 		super(props);
@@ -43,14 +46,14 @@ class DeckEdit extends React.Component {
 	render() {
 		const { config, cards, loaded, error, modal } = this.state;
 
-		return loaded ? <div>
+		return loaded ? <BaseLayout>
 			{modal ? <CommitModal cancel={this.modalCancel} commit={this.modalCommit}/> : null}
 
 			<EditDeck config={config} setConfig={config => this.setState({config})} />
 			<EditList cards={cards} setCards={cards => this.setState({cards})} />
 			
-		    <button onClick={this.openPopup}>Save</button> 
-		</div> : error ? <div>{error}</div> : <div>Loading</div>
+		    <Button onClick={this.openPopup}>Save</Button> 
+		</BaseLayout> : error ? <div>{error}</div> : <div>Loading</div>
 	}
 }
 

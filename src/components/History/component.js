@@ -22,7 +22,6 @@ class History extends React.Component {
 		this.state = {
 			commits: [],
 			index: 0,
-			expanded: -1,
 		}
 	}
 
@@ -31,8 +30,6 @@ class History extends React.Component {
 			this.setState({commits});
 		})
 	}
-
-	setExpanded = expanded => this.setState({ expanded })
 
 	render () {
 		const { commits, index, expanded } = this.state;
@@ -46,14 +43,14 @@ class History extends React.Component {
 					<h3>{commit.message}</h3>
 					{commit.diff.added.length ? <CardSection
 						title={`+ Added (${commit.diff.added.length})`}
-						expanded={this.state.expanded}
-						setExpanded={index => this.setExpanded(index)}
+						expanded={this.props.expanded}
+						setExpanded={index => this.props.setExpanded(index)}
 						cards={commit.diff.added}
 						/> : null}
 					{commit.diff.removed.length ? <CardSection
 						title={`- Removed (${commit.diff.removed.length})`}
-						expanded={this.state.expanded - commit.diff.added.length}
-						setExpanded={index => this.setExpanded(index + commit.diff.added.length)}
+						expanded={this.props.expanded - commit.diff.added.length}
+						setExpanded={index => this.props.setExpanded(index + commit.diff.added.length)}
 						cards={commit.diff.removed}
 						/> : null}
 				</div> : null

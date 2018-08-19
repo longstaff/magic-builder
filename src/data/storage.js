@@ -17,12 +17,19 @@ const setData = json => {
 */
 export const loadData = slug => {
 	const json = getData();
-	return Promise.resolve(json[slug] ? json[slug] : null);
+	return Promise.resolve(json[slug] ? json[slug].data : null);
 }
-export const saveSlug = (slug, data) => {
+export const loadSummary = slug => {
+	const json = getData();
+	return Promise.resolve(json[slug] ? json[slug].summary : null);
+}
+export const saveSlug = (slug, data, summary) => {
 	setData({
 		...getData(),
-		[slug]: data
+		[slug]: {
+			data,
+			summary
+		}
 	});
 	return Promise.resolve(true);
 }
@@ -39,5 +46,8 @@ export const isSlugUsed = slug => {
 }
 export const getDeckList = slug => {
 	const json = getData();
-	return Promise.resolve(Object.keys(json));
+	return Promise.resolve(Object.keys(json).map(key => ({
+		slug: key,
+		...json[key].summary
+	})));
 }

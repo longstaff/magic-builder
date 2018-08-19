@@ -1,6 +1,6 @@
 import React from 'react';
 import { getCard } from '../../utils/cache';
-import ProxyCard from '../ProxyCard';
+import CardProxy from '../CardProxy';
 import CardExpanded from '../CardExpanded';
 
 class Card extends React.Component {
@@ -14,7 +14,12 @@ class Card extends React.Component {
 
 	componentDidMount() {
 		const {data} = this.props;
-		getCard({name: data.name}).then(card => this.setState({loaded: true, card}))
+
+		if(data.proxyOnly) {
+			this.setState({loaded: true, card: data})
+		} else {
+			getCard({name: data.name}).then(card => this.setState({loaded: true, card}))
+		}
 	}
 
 	render(){
@@ -22,9 +27,9 @@ class Card extends React.Component {
 		const {expanded, data} = this.props;
 
 		return loaded ?
-			expanded ? 
-				<CardExpanded card={card} name={data.name}/> : <ProxyCard card={card}/>
-			: <ProxyCard card={{name: data.name}}/>;
+			expanded && !card.proxyOnly ? 
+				<CardExpanded card={card} name={data.name}/> : <CardProxy card={card}/>
+			: <CardProxy card={{name: data.name}}/>;
 	}
 }
 

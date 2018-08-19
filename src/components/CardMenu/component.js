@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import { Button, BodyTextStyles } from '../Css';
 
 const StyledList = styled.ul`
 	margin: 0;
@@ -13,13 +13,18 @@ const StyledItem = styled.li`
 	padding: 0;
 `
 const StyledStatus = styled.div`
-
+	${BodyTextStyles}
+	width: 40px;
+	text-align: center;
+	margin: 10px 0;
 `
-const StyledButton = styled.button`
-
+const StyledButton = styled(Button)`
+	width: 40px;
+	padding-left: 0;
+	padding-right: 0;
 `
 
-class CardSection extends React.Component {
+class CardMenu extends React.Component {
 	render(){
 		const {cards = [], card, addCard, removeCard} = this.props;
 		const count = cards.filter(check => check.name === card.name).length;
@@ -32,4 +37,4 @@ class CardSection extends React.Component {
 	}
 }
 
-export default CardSection
+export default CardMenu
