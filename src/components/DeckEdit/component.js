@@ -1,11 +1,20 @@
 import React from 'react';
-import EditDeck from '../EditDeck'
-import EditList from '../EditList'
-import CommitModal from '../CommitModal'
-import { loadFile, saveState } from '../../data'
+import styled from 'styled-components';
+import EditDeck from '../EditDeck';
+import EditList from '../EditList';
+import CommitModal from '../CommitModal';
+import { loadFile, saveState } from '../../data';
 
-import { BaseLayout } from '../Layout'
-import { Button } from '../Css'
+import { BaseLayout } from '../Layout';
+import { Button } from '../Css';
+
+const StyledBaseLayout = styled(BaseLayout)`
+	overflow: ${props => props.scrollFreeze ? 'hidden' : 'auto'};
+`
+const StyledButton = styled(Button)`
+	width: 100%;
+	margin-top: 30px;
+`
 
 class DeckEdit extends React.Component {
 	constructor(props) {
@@ -14,9 +23,10 @@ class DeckEdit extends React.Component {
 		this.state = {
 			config: {},
 			cards: [],
-			expanded: -1,
+			expanded: 0,
 			loaded: false,
 			modal: false,
+			scrollFreeze: false
 		}
 	}
 
@@ -42,18 +52,21 @@ class DeckEdit extends React.Component {
 	modalCancel = () => {
 		this.setState({modal: false});
 	}
+	setScrollFreeze = (scrollFreeze) => {
+		this.setState({scrollFreeze})
+	}
 
 	render() {
-		const { config, cards, loaded, error, modal } = this.state;
+		const { config, cards, loaded, error, modal, scrollFreeze } = this.state;
 
-		return loaded ? <BaseLayout>
+		return loaded ? <StyledBaseLayout scrollFreeze={scrollFreeze || modal}>
 			{modal ? <CommitModal cancel={this.modalCancel} commit={this.modalCommit}/> : null}
 
 			<EditDeck config={config} setConfig={config => this.setState({config})} />
-			<EditList cards={cards} setCards={cards => this.setState({cards})} />
+			<EditList cards={cards} setCards={cards => this.setState({cards})} setScrollFreeze={this.setScrollFreeze} />
 			
-		    <Button onClick={this.openPopup}>Save</Button> 
-		</BaseLayout> : error ? <div>{error}</div> : <div>Loading</div>
+		    <StyledButton onClick={this.openPopup}>Save</StyledButton> 
+		</StyledBaseLayout> : error ? <div>{error}</div> : <div>Loading</div>
 	}
 }
 

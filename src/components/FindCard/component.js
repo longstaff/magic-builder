@@ -3,10 +3,14 @@ import styled from 'styled-components';
 import { getCardList } from '../../utils/cache';
 import CardSection from '../CardSection';
 import CardMenu from '../CardMenu';
-import {SectionTitle, TextInput} from '../Css';
+import CardBase from '../CardBase';
+import {SectionTitle, TextInput, baseStyle} from '../Css';
 
 const DEBOUNCE_TIME = 200;
 
+const StyledCardBase = styled(CardBase)`
+	margin: 40px auto 20px;
+`
 const StyledHiddenButton = styled.button`
 	border: 1px solid white;
 	border-radius: 50%;
@@ -15,6 +19,62 @@ const StyledHiddenButton = styled.button`
   	width: 19px;
     height: 19px;
     box-sizing: border-box;
+`
+const StyledColors = styled.div`
+	position:absolute;
+	text-align:right;
+	right: 10px;
+	top: 10px;
+	font-size: 0.7em;
+`
+const StyledTitle = styled.div`
+    font-family: serif;
+    font-weight: bold;
+    font-size: 1.1em;
+	position:absolute;
+	top: 10px;
+	left: 10px;
+`
+const StyledTypeBar = styled.div`
+	position: absolute;
+	display: flex;
+	top: 190px;
+	height: 24px;
+	left: 3px;
+	right: 3px;
+	border: 1px solid black;
+	border-radius: 4px; 
+	padding: 2px 5px;
+	background: rgba(255,255,255,0.5);
+`
+const StyledType = styled.select`
+    font-size: 0.8em;
+    flex-grow: 1;
+    align-self: center;
+`
+const StyledSubType = styled.div`
+    font-family: serif;
+    font-size: 0.9em;
+    flex-grow: 1;
+    text-align: right;
+    align-self: center;
+`
+const StyledText = styled.div`
+    font-family: serif;
+    font-size: 1.1em;
+	position:absolute;
+	top:220px;
+	bottom: 10px;
+	left: 5px;
+	right: 5px;
+	border: 1px solid rgba(0,0,0,0.5);
+	padding: 6px 8px;
+`
+
+const StyledLoading = styled.p`
+	${baseStyle}
+	margin: 20px;
+	text-align:center;
 `
 
 class FindCard extends React.Component {
@@ -30,7 +90,8 @@ class FindCard extends React.Component {
 			type: '',
 			colours: props.colours || [],
 			colourMatch: 'exclusive',
-			searchField: 'name'
+			searchField: 'name',
+			searching: false
 		}
 	}
 
@@ -73,6 +134,7 @@ class FindCard extends React.Component {
 			this.setState({results: []});
 			return;
 		}
+		this.setState({results: [], searching: true, expanded: 0});
 
 		getCardList({
 			search: this.state.search,
@@ -81,7 +143,7 @@ class FindCard extends React.Component {
 			colours: this.state.colours,
 			colourMatch: this.state.colourMatch,
 		}).then(data => {
-			this.setState({results: data});
+			this.setState({results: data, searching: false});
 		});
 	}
 
@@ -101,47 +163,66 @@ class FindCard extends React.Component {
 			<TextInput 
 				value={this.state.search}
 				onChange={this.setSearch}
+				placeholder="Search keywords"
 			/>
-			<div>
-				<StyledHiddenButton onClick={ev => this.toggleColour('w')}><span className={`ms ms-w${this.state.colours.indexOf('w') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
-				<StyledHiddenButton onClick={ev => this.toggleColour('u')}><span className={`ms ms-u${this.state.colours.indexOf('u') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
-				<StyledHiddenButton onClick={ev => this.toggleColour('b')}><span className={`ms ms-b${this.state.colours.indexOf('b') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
-				<StyledHiddenButton onClick={ev => this.toggleColour('r')}><span className={`ms ms-r${this.state.colours.indexOf('r') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
-				<StyledHiddenButton onClick={ev => this.toggleColour('g')}><span className={`ms ms-g${this.state.colours.indexOf('g') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
-			</div>
-			<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'exclusive'} type='radio' name='colourMatch' value='exclusive' id='colourMatch-exclusive'/>
-			<label htmlFor="colourMatch-exclusive">Exclusive (ignore other colours)</label>
-			
-			<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'inclusive'} type='radio' name='colourMatch' value='inclusive' id='colourMatch-inclusive'/>
-			<label htmlFor="colourMatch-inclusive">Inclusive (Has at least one of these colours)</label>
-			
-			<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'exact'} type='radio' name='colourMatch' value='exact' id='colourMatch-exact'/>
-			<label htmlFor="colourMatch-exact">Exact (Has these and only these colours)</label>
 
-			{/*
-			<input onChange={this.setSearchField} checked={this.state.searchField === 'name'} type='radio' name='searchField' value='name' id='searchField-name'/>
-			<label htmlFor="searchField-name">Name</label>
-			
-			<input onChange={this.setSearchField} checked={this.state.searchField === 'text'} type='radio' name='searchField' value='text' id='searchField-text'/>
-			<label htmlFor="searchField-text">Text</label>
-			
-			<input onChange={this.setSearchField} checked={this.state.searchField === 'type'} type='radio' name='searchField' value='type' id='searchField-type'/>
-			<label htmlFor="searchField-type">Type</label>
-			*/}
+			<StyledCardBase 
+				card={{colorIdentity:this.state.colours.map(c=>c.toUpperCase())}}
+				width={290}
+				height={400}
+			>
+				<StyledColors>
+					<div>
+						<StyledHiddenButton onClick={ev => this.toggleColour('w')}><span className={`ms ms-w${this.state.colours.indexOf('w') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+						<StyledHiddenButton onClick={ev => this.toggleColour('u')}><span className={`ms ms-u${this.state.colours.indexOf('u') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+						<StyledHiddenButton onClick={ev => this.toggleColour('b')}><span className={`ms ms-b${this.state.colours.indexOf('b') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+						<StyledHiddenButton onClick={ev => this.toggleColour('r')}><span className={`ms ms-r${this.state.colours.indexOf('r') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+						<StyledHiddenButton onClick={ev => this.toggleColour('g')}><span className={`ms ms-g${this.state.colours.indexOf('g') > -1 ? ' ms-cost' : ''}`}/></StyledHiddenButton>
+					</div>
+					<div>
+						<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'exclusive'} type='radio' name='colourMatch' value='exclusive' id='colourMatch-exclusive'/>
+						<label htmlFor="colourMatch-exclusive" title="Exclusive (ignore other colours)">&gt;&lt;</label>
+						<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'inclusive'} type='radio' name='colourMatch' value='inclusive' id='colourMatch-inclusive'/>
+						<label htmlFor="colourMatch-inclusive" title="Inclusive (Has at least one of these colours)">&lt;&gt;</label>
+						<input onChange={this.setColourMatch} checked={this.state.colourMatch === 'exact'} type='radio' name='colourMatch' value='exact' id='colourMatch-exact'/>
+						<label htmlFor="colourMatch-exact" title="Exact (Has these and only these colours)">==</label>
+					</div>
+				</StyledColors>
 
-			<select value={this.state.type} onChange={this.setType}>
-				<option value="">Select type to filter</option>
-				<option value="artifact">Artifact</option>
-				<option value="creature">Creature</option>
-				<option value="enchantment">Enchantment</option>
-				<option value="instant">Instant</option>
-				<option value="land">Land</option>
-				<option value="planeswalker">Planeswalker</option>
-				<option value="sorcery">Sorcery</option>
-			</select>
+				<StyledTitle>
+					<input onChange={this.setSearchField} checked={this.state.searchField === 'name'} type='radio' name='searchField' value='name' id='searchField-name'/>
+					<label htmlFor="searchField-name">Search in Name</label>
+				</StyledTitle>
+				
+				<StyledTypeBar>
+					<StyledType value={this.state.type} onChange={this.setType}>
+						<option value="">Select type to filter</option>
+						<option value="artifact">Artifact</option>
+						<option value="creature">Creature</option>
+						<option value="enchantment">Enchantment</option>
+						<option value="instant">Instant</option>
+						<option value="land">Land</option>
+						<option value="planeswalker">Planeswalker</option>
+						<option value="sorcery">Sorcery</option>
+					</StyledType>
+					<StyledSubType>
+						<input onChange={this.setSearchField} checked={this.state.searchField === 'type'} type='radio' name='searchField' value='type' id='searchField-type'/>
+						<label htmlFor="searchField-type">Search in Type</label>
+					</StyledSubType>
+				</StyledTypeBar>
+				
+				<StyledText>
+					<input onChange={this.setSearchField} checked={this.state.searchField === 'text'} type='radio' name='searchField' value='text' id='searchField-text'/>
+					<label htmlFor="searchField-text">Search in Text</label>
+				</StyledText>
+			</StyledCardBase>
 
 			{
-				this.state.results.length ?
+				this.state.searching ?
+					<StyledLoading>
+						Loading
+					</StyledLoading>
+					: this.state.results.length ?
 					<CardSection
 						title={`Results (${this.state.results.length})`}
 						cards={this.state.results}

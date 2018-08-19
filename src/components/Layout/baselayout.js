@@ -8,14 +8,13 @@ const StyledBasePageGrid = styled(BasePage)`
     height: 100%;
 `
 
-
-export const BaseLayout = props => (
-	<StyledBasePageGrid>
+export const BaseLayout = ({title, children, ...props}) => (
+	<StyledBasePageGrid {...props}>
 		<Header>
-			<PageTitle>{props.title ? props.title : 'Chronicler'}</PageTitle>
+			<PageTitle>{title ? title : 'Chronicler'}</PageTitle>
 		</Header>
 		<Content>
-			{props.children}
+			{children}
 		</Content>
 		<Footer/>
 	</StyledBasePageGrid>

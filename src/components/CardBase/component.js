@@ -15,8 +15,8 @@ const backgroundColours = {
 
 const StyledCardBase = styled.div`
 	color: black;
-	width: 223px;
-	height: 310px;
+	width: ${props => props.width}px;
+	height: ${props => props.height}px;
 	background: black;
 	border: ${BORDER}px solid white;
 	border-radius: 12px;
@@ -39,10 +39,10 @@ const getCardColour = card => {
 	return backgroundColours[backgroundIndex] || '#CDBA86';
 }
 
-const CardBase = ({card = {}, children}) => {
+const CardBase = ({card = {}, children, width=223, height=310, ...props}) => {
 	const background = getCardColour(card)
 
-	return <StyledCardBase>
+	return <StyledCardBase width={width} height={height} {...props}>
 		<StyledCardInner background={background}>
 			{children}
 		</StyledCardInner>

@@ -27,7 +27,7 @@ class EditDeck extends React.Component {
 		const { config = {name: '', description: ''} } = this.props;
 
 		return <div>
-			<SectionTitle>Config</SectionTitle>
+			<SectionTitle>Deck information</SectionTitle>
 			<TextInput type="text" onChange={ev => this.setName(ev.target.value)} placeholder="deck name" value={config.name}/>
 			<TextArea onChange={ev => this.setDescription(ev.target.value)} value={config.description} placeholder="deck description" />
 		</div>
