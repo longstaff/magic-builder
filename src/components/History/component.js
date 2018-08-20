@@ -4,7 +4,14 @@ import styled from 'styled-components';
 import { getHistory } from '../../data/git'
 import HistoryList from '../HistoryList';
 import CardSection from '../CardSection';
+import { baseStyle } from '../Css';
 
+const StyledContainer = styled.div`
+	margin: 20px 0;
+`
+const StyledCommitMessage = styled.h3`
+	${baseStyle}
+`
 const StyledHistoryList = styled.ul`
 	margin:0;
 	padding:0;
@@ -35,12 +42,12 @@ class History extends React.Component {
 		const { commits, index, expanded } = this.state;
 		const commit = commits[index];
 
-		return <div>
+		return <StyledContainer>
 			<HistoryList commits={commits} index={index} setIndex={index => this.setState({index})}/>
 			
 			{
 				commit ? <div>
-					<h3>{commit.message}</h3>
+					<StyledCommitMessage>{commit.message}</StyledCommitMessage>
 					{commit.diff.added.length ? <CardSection
 						title={`+ Added (${commit.diff.added.length})`}
 						expanded={this.props.expanded}
@@ -55,7 +62,7 @@ class History extends React.Component {
 						/> : null}
 				</div> : null
 			}
-		</div>
+		</StyledContainer>
 	}
 }
 

@@ -3,15 +3,20 @@ import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import CardSection from '../CardSection';
 import History from '../History';
+import DeckNotice from '../DeckNotice'
 import { getCommanderTypeSections } from '../../utils/sections';
 import { BaseLayout } from '../Layout'
 import { Button } from '../Css'
+import { BASE_URL } from '../../constants'
 
 import { loadFile } from '../../data';
 
 const PAGE_MAIN = 0;
 const PAGE_HISTORY = 1;
 
+const StyledButton = styled(Button)`
+	width: 100%;
+`
 const StyledDeckList = styled.ul`
 	margin:0;
 	padding:0;
@@ -69,7 +74,7 @@ class DeckView extends React.Component {
 
 	onMainNav = () => {
 		const deckId = this.props.match.params.id;
-		this.props.history.push(`/deck/${deckId}`);
+		this.props.history.push(`${BASE_URL}deck/${deckId}`);
 	}
 
 	render(){
@@ -77,12 +82,12 @@ class DeckView extends React.Component {
 		const config = deck && deck.config ? deck.config : {name: '', description: ''};
 
 		return deck ? <BaseLayout>
-			<Button onClick={this.onMainNav}>Card list</Button>
+			<StyledButton onClick={this.onMainNav}>Card list</StyledButton>
 			<History 
 				expanded={expanded}
 				setExpanded={this.setExpanded}
 			/>
-		</BaseLayout>: error ? <h1>{`Error: ${error}`}</h1> : <h1>Loading</h1>
+		</BaseLayout>: error ? <DeckNotice message={`Error: ${error}`} back={true}/> : <DeckNotice message={`Loading`}/>
 	}
 }
 

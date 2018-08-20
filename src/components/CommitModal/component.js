@@ -1,14 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Button, ModalBox, ModalOverlay, TextArea, SectionTitle } from '../Css';
+import { ButtonRow, Button, ModalBox, ModalOverlay, TextArea, SectionTitle } from '../Css';
 
-const StyledButtonHolder = styled.div`
-	display: flex;
-`
-const StyledButton = styled(Button)`
-	margin: 0 10px;
-	flex-grow: 1;
-`
 const StyledTextArea = styled(TextArea)`
 	margin: 30px 0;
 `
@@ -40,10 +33,10 @@ class CommitModal extends React.Component {
 
 				<StyledTextArea onChange={ev => this.setState({description: ev.target.value})} placeholder="change description"/>
 				
-				<StyledButtonHolder>
-				    <StyledButton onClick={this.cancel}>Cancel</StyledButton> 
-				    <StyledButton onClick={this.commit}>Save</StyledButton>
-			    </StyledButtonHolder>
+				<ButtonRow>
+				    <Button onClick={this.cancel}>Cancel</Button> 
+				    <Button onClick={this.commit}>Save</Button>
+			    </ButtonRow>
 			</ModalBox>
 		</ModalOverlay>
 	}

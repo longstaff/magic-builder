@@ -10,7 +10,7 @@ const WIDTH = 20;
 const StyledWrapper = styled.div`
 	margin:0;
 	padding:0;
-	width: 100vw;
+	width: 100%;
 	overflow-x: auto;
 `
 const StyledHistoryList = styled.ul`

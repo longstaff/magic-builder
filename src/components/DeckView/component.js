@@ -2,11 +2,13 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import styled from 'styled-components';
 import CardSection from '../CardSection';
+import DeckNotice from '../DeckNotice';
 import { getCommanderTypeSections } from '../../utils/sections';
 import { loadFile } from '../../data';
+import { BASE_URL } from '../../constants';
 
 import { BaseLayout } from '../Layout'
-import { Button } from '../Css'
+import { baseStyle, Button, ButtonRow } from '../Css'
 
 
 const StyledDeckList = styled.ul`
@@ -18,6 +20,12 @@ const StyledDeckListItem = styled.li`
 	margin:0;
 	padding:0;
 	list-style:none;
+`
+const StyledTitle = styled.h1`
+	${baseStyle}
+`
+const StyledDescription = styled.p`
+	${baseStyle}
 `
 
 class DeckView extends React.Component {
@@ -65,7 +73,7 @@ class DeckView extends React.Component {
 	}
 
 	navigateTo = (path) => {
-		this.props.history.push(`/deck/${this.props.match.params.id}/${path}`)
+		this.props.history.push(`${BASE_URL}deck/${this.props.match.params.id}/${path}`)
 	}
 
 	render(){
@@ -73,11 +81,13 @@ class DeckView extends React.Component {
 		const config = deck && deck.config ? deck.config : {name: '', description: ''};
 
 		return deck ? <BaseLayout>
-			<Button onClick={() => this.navigateTo('edit')}>Edit</Button>
-			<Button onClick={() => this.navigateTo('history')}>History</Button>
+			<ButtonRow>
+				<Button onClick={() => this.navigateTo('edit')}>Edit</Button>
+				<Button onClick={() => this.navigateTo('history')}>History</Button>
+			</ButtonRow>
 
-			{ config.name ? <h1>{config.name}</h1> : null }
-			{ config.description ? <p>{config.description}</p> : null }
+			{ config.name ? <StyledTitle>{config.name}</StyledTitle> : null }
+			{ config.description ? <StyledDescription>{config.description}</StyledDescription> : null }
 
 			<StyledDeckList>
 				{deck.sections.map((section, index, arr) => {
@@ -91,7 +101,7 @@ class DeckView extends React.Component {
 					</StyledDeckListItem>
 				})}
 	        </StyledDeckList>
-		</BaseLayout>: error ? <h1>{`Error: ${error}`}</h1> : <h1>Loading</h1>
+		</BaseLayout>: error ? <DeckNotice message={`Error: ${error}`} back={true}/> : <DeckNotice message={`Loading`}/>
 	}
 }
 

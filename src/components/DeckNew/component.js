@@ -1,9 +1,11 @@
 import React from 'react';
 import styled from 'styled-components'
+import { withRouter } from 'react-router-dom';
 import EditList from '../EditList'
 import EditDeck from '../EditDeck'
 import ImportList from '../ImportList';
 import { initRepo, saveState, checkSlug } from '../../data'
+import { BASE_URL } from '../../constants';
 
 import { BaseLayout } from '../Layout';
 import { Button } from '../Css';
@@ -41,13 +43,14 @@ class DeckNew extends React.Component {
 			return
 		}
 
-		const newSlug = name.replace(/\s/, '-');
+		const newSlug = name.replace(/\s/g, '-');
 		checkSlug(newSlug).then(used => {
 			if (used) {
 				alert('duplicate name found, use a different one');
 				return
 			}
-			saveState(newSlug, 'initial commit', {config: this.state.config, main: this.state.cards});
+			saveState(newSlug, 'initial commit', {config: this.state.config, main: this.state.cards})
+				.then(() => this.props.history.push(`${BASE_URL}deck/${newSlug}/`));
 		})
 	}
 	setScrollFreeze = (scrollFreeze) => {
@@ -67,4 +70,4 @@ class DeckNew extends React.Component {
 	}
 }
 
-export default DeckNew
+export default withRouter(DeckNew)

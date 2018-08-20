@@ -1,9 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
+import { withRouter } from 'react-router-dom';
 import EditDeck from '../EditDeck';
 import EditList from '../EditList';
 import CommitModal from '../CommitModal';
+import LoadingModal from '../LoadingModal';
+import DeckNotice from '../DeckNotice'
 import { loadFile, saveState } from '../../data';
+import { BASE_URL } from '../../constants';
 
 import { BaseLayout } from '../Layout';
 import { Button } from '../Css';
@@ -26,7 +30,8 @@ class DeckEdit extends React.Component {
 			expanded: 0,
 			loaded: false,
 			modal: false,
-			scrollFreeze: false
+			scrollFreeze: false,
+			server: false,
 		}
 	}
 
@@ -46,8 +51,9 @@ class DeckEdit extends React.Component {
 		this.setState({modal: true});
 	}
 	modalCommit = message => {
-		saveState(this.props.match.params.id, message, {config: this.state.config, main: this.state.cards});
-		this.setState({modal: false});
+		this.setState({modal: false, server: true});
+		saveState(this.props.match.params.id, message, {config: this.state.config, main: this.state.cards})
+			.then(() => this.props.history.push(`${BASE_URL}deck/${this.props.match.params.id}/`));
 	}
 	modalCancel = () => {
 		this.setState({modal: false});
@@ -57,17 +63,18 @@ class DeckEdit extends React.Component {
 	}
 
 	render() {
-		const { config, cards, loaded, error, modal, scrollFreeze } = this.state;
+		const { config, cards, loaded, error, modal, server, scrollFreeze } = this.state;
 
-		return loaded ? <StyledBaseLayout scrollFreeze={scrollFreeze || modal}>
+		return loaded ? <StyledBaseLayout scrollFreeze={scrollFreeze || modal || server}>
 			{modal ? <CommitModal cancel={this.modalCancel} commit={this.modalCommit}/> : null}
+			{server ? <LoadingModal/> : null}
 
 			<EditDeck config={config} setConfig={config => this.setState({config})} />
 			<EditList cards={cards} setCards={cards => this.setState({cards})} setScrollFreeze={this.setScrollFreeze} />
 			
 		    <StyledButton onClick={this.openPopup}>Save</StyledButton> 
-		</StyledBaseLayout> : error ? <div>{error}</div> : <div>Loading</div>
+		</StyledBaseLayout> : error ? <DeckNotice message={`Error: ${error}`} back={true}/> : <DeckNotice message={`Loading`}/>
 	}
 }
 
-export default DeckEdit
+export default withRouter(DeckEdit)

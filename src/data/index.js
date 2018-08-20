@@ -21,9 +21,9 @@ export const loadFile = (slug, initGit = true) =>
 	)
 
 export const saveState = (slug, message, data) => {
-	const commander = data.main.cards.filter(card => card.commander);
+	const commander = data.main.filter(card => card.commander);
 
-	const colours = Promise.all(commander.map(card => getCard(card.name))).then(data => {
+	const colours = Promise.all(commander.map(card => getCard(card))).then(data => {
 		const colours = [];
 		data.forEach(cardData => {
 			cardData.colorIdentity.forEach(colour => {
@@ -34,27 +34,25 @@ export const saveState = (slug, message, data) => {
 		return colours;
 	})
 
-	return colours.then(data => {
+	return colours.then(colourData => {
 		const summary = {
 			title: data.config.name,
 			description: data.config.description,
-			commander,
-			colours: data
+			colours: colourData
 		}
 
 		return git.commit(message, data)
 			.then(() => git.getMemory())
-			.then(saveData => storage.saveSlug(slug, saveData))
+			.then(saveData => storage.saveSlug(slug, saveData, summary))
 	}, err => {
 		const summary = {
 			title: data.config.name,
 			description: data.config.description,
-			commander,
 		}
 
 		return git.commit(message, data)
 			.then(() => git.getMemory())
-			.then(saveData => storage.saveSlug(slug, saveData))
+			.then(saveData => storage.saveSlug(slug, saveData, summary))
 	})
 
 }

@@ -3,6 +3,9 @@ import mtg from 'mtgsdk';
 const cache = {};
 
 export const getCard = ({name}) => {
+
+	console.log('getCard', name)
+
 	return cache[name] ? Promise.resolve(cache[name]) : getCardList({search:name, exactSearch:true, searchField: 'name', pageSize: 1}).then(
 		cards => {
 			return cards[0]
@@ -27,7 +30,7 @@ export const getCardList = ({search='', exactSearch=false, searchField='name', p
 				const matchName = widerCards.find(test => {
 					return test.name === search
 				});
-				return processCards(matchName ? [matchName] : widerCards[0], colours, colourMatch)
+				return processCards(matchName ? [matchName] : widerCards.slice(0,1), colours, colourMatch)
 			});
 		} else return processCards(cards, colours, colourMatch)
 	})
