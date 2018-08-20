@@ -1,8 +1,20 @@
 import React from 'react';
+import styled from 'styled-components'
 import EditList from '../EditList'
 import EditDeck from '../EditDeck'
 import ImportList from '../ImportList';
 import { initRepo, saveState, checkSlug } from '../../data'
+
+import { BaseLayout } from '../Layout';
+import { Button } from '../Css';
+
+const StyledBaseLayout = styled(BaseLayout)`
+	overflow: ${props => props.scrollFreeze ? 'hidden' : 'auto'};
+`
+const StyledButton = styled(Button)`
+	width: 100%;
+	margin-top: 30px;
+`
 
 class DeckNew extends React.Component {
 	constructor(props){
@@ -11,6 +23,7 @@ class DeckNew extends React.Component {
 			config: {},
 			cards: [],
 			expanded: -1,
+			scrollFreeze: false
 		}
 	}
 	componentDidMount() {
@@ -37,17 +50,20 @@ class DeckNew extends React.Component {
 			saveState(newSlug, 'initial commit', {config: this.state.config, main: this.state.cards});
 		})
 	}
+	setScrollFreeze = (scrollFreeze) => {
+		this.setState({scrollFreeze})
+	}
 
 	render(){
 		const {config, cards} = this.state;
 
-		return <div>
+		return <StyledBaseLayout>
 			<EditDeck config={config} setConfig={config => this.setState({config})}/>
-			<ImportList completeImport={this.setImport} />
-			<EditList cards={cards} setCards={cards => this.setState({cards})} />
+			<ImportList completeImport={this.setImport} setScrollFreeze={this.setScrollFreeze}/>
+			<EditList cards={cards} setCards={cards => this.setState({cards})} setScrollFreeze={this.setScrollFreeze}/>
 			
-			<button onClick={this.commit}>Save</button> 
-		</div>
+			<StyledButton onClick={this.commit}>Save</StyledButton> 
+		</StyledBaseLayout>
 	}
 }
 

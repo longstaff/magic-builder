@@ -1,9 +1,38 @@
 import React from 'react';
+import styled from 'styled-components'
+import { Button, ModalBox, ModalOverlay, TextArea } from '../Css';
 
-const ImportList = ({ completeImport }) => {
-	let text = null
+const StyledHolder = styled.div`
+	margin: 20px 0;
+`
+const StyledButton = styled(Button)`
+	width:100%;
+`
+const StyledCloseButton = styled(Button)`
+	margin-top:20px;
+	width:100%;
+`
 
-	const parseFields = input => (
+class ImportList extends React.Component {
+	text = null
+
+	constructor(props) {
+		super(props);
+		this.state = {
+			setScrollFreeze: false
+		}
+	}
+
+	importCards = () => {
+		this.setState({searching: true})
+		if (this.props.setScrollFreeze) this.props.setScrollFreeze(true)
+	}
+	completeImportCards = () => {
+		this.setState({searching: false})
+		if (this.props.setScrollFreeze) this.props.setScrollFreeze(false)
+	}
+
+	parseFields = input => (
 		input.split(/\n/g).map(line => {
 			const results = /(\d+)x (.+?)(#.+)?( \*CMDR\*)?$/.exec(line);
 			const output = [];
@@ -20,12 +49,25 @@ const ImportList = ({ completeImport }) => {
 		}).reduce((all, next) => [...all, ...next], [])
 	)
 
-	const onSubmit = () => completeImport(parseFields(text.value))
+	onSubmit = () => {
+		this.props.completeImport(this.parseFields(this.text.value));
+		this.completeImportCards();
+	}
 
-	return <div>
-		<textarea ref={node => text = node}></textarea>
-		<button onClick={onSubmit}>Import</button>
-	</div>
+	render() {
+		const {searching} = this.state;
+
+		return <StyledHolder>
+			<StyledButton onClick={this.importCards}>Import from TO file</StyledButton>
+			{searching ? <ModalOverlay>
+				<ModalBox>
+					<TextArea ref={node =>this.text = node}></TextArea>
+					<StyledButton onClick={this.onSubmit}>Import</StyledButton>
+					<StyledCloseButton onClick={this.completeImportCards}>Cancel</StyledCloseButton>
+				</ModalBox>
+			</ModalOverlay> : null}
+		</StyledHolder>
+	}
 }
 
 export default ImportList
